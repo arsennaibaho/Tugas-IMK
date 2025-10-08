@@ -1,11 +1,13 @@
+
 import React, { useState, useMemo, useRef, useEffect } from 'react';
 import { Task, FilterStatus, TaskPriority, Repetition, RepetitionType } from '../types';
 import TaskItem from './TaskItem';
-import PlusIcon from './icons/PlusIcon';
+import PaperAirplaneIcon from './icons/PaperAirplaneIcon';
 import Calendar from './Calendar';
 import CalendarIcon from './icons/CalendarIcon';
 import XIcon from './icons/XIcon';
 import BellIcon from './icons/BellIcon';
+import PlusIcon from './icons/PlusIcon';
 
 interface TaskManagerProps {
   userName: string;
@@ -45,6 +47,7 @@ const TaskManager: React.FC<TaskManagerProps> = ({ userName, tasks, addTask, tog
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
   const [hasNewNotifications, setHasNewNotifications] = useState(false);
   const [isWelcomeNotificationOpen, setIsWelcomeNotificationOpen] = useState(false);
+  const [isAddTaskFormVisible, setIsAddTaskFormVisible] = useState(true);
   
   // Edit Task Modal State
   const [editingTask, setEditingTask] = useState<Task | null>(null);
@@ -613,78 +616,108 @@ const TaskManager: React.FC<TaskManagerProps> = ({ userName, tasks, addTask, tog
 
         <div>
             <div className="bg-white p-6 rounded-2xl border-2 border-slate-200 mb-6 shadow-lg">
-              <form onSubmit={handleAddTask}>
-                <div className="flex gap-3 mb-4">
-                  <input
-                    type="text"
-                    value={newTask}
-                    onChange={(e) => setNewTask(e.target.value)}
-                    placeholder="Agenda Baru"
-                    className="flex-grow bg-slate-100 border-2 border-slate-200 rounded-full px-5 py-3 focus:ring-2 focus:ring-orange-400 focus:border-orange-400 outline-none transition-all duration-200 text-slate-800 placeholder-slate-400"
-                  />
-                  <button 
-                    type="submit" 
-                    className={`bg-orange-500 text-white font-bold p-3 rounded-full transition-all duration-200 flex items-center justify-center aspect-square transform ${
-                      isAddButtonDisabled 
-                      ? 'opacity-50 cursor-not-allowed' 
-                      : 'hover:bg-orange-600 hover:scale-110'
-                    }`}
-                    aria-label="Tambah petualangan"
-                    disabled={isAddButtonDisabled}>
-                    <PlusIcon className="w-6 h-6" />
-                  </button>
-                </div>
-                
-                <div className="flex flex-wrap items-center justify-start gap-3">
-                  <span className="text-sm font-semibold text-slate-500">Tentukan Deadline:</span>
-                  <div>
-                    <div className="relative" ref={datePickerRef}>
+              <div
+                className="flex justify-between items-center cursor-pointer group"
+                onClick={() => setIsAddTaskFormVisible(prev => !prev)}
+                aria-expanded={isAddTaskFormVisible}
+                aria-controls="add-task-form"
+                role="button"
+                tabIndex={0}
+                onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') setIsAddTaskFormVisible(prev => !prev); }}
+              >
+                <h3 className="text-xl font-bold text-slate-700 group-hover:text-teal-600 transition-colors">Tambahkan Tugas</h3>
+                <button
+                  type="button"
+                  className="p-1 rounded-full group-hover:bg-slate-100 transition-transform duration-300 ease-in-out"
+                  aria-label={isAddTaskFormVisible ? "Sembunyikan form tambah tugas" : "Tampilkan form tambah tugas"}
+                  style={{ transform: isAddTaskFormVisible ? 'rotate(45deg)' : 'rotate(0deg)' }}
+                  tabIndex={-1}
+                >
+                  <PlusIcon className="w-6 h-6 text-slate-600" />
+                </button>
+              </div>
+              <div
+                id="add-task-form"
+                className="grid transition-all duration-500 ease-in-out"
+                style={{ gridTemplateRows: isAddTaskFormVisible ? '1fr' : '0fr' }}
+              >
+                <div className="overflow-hidden">
+                  <div className={`pt-4 ${!isAddTaskFormVisible && 'invisible'}`}>
+                    <form onSubmit={handleAddTask}>
+                      <div className="flex gap-3 mb-4">
+                        <input
+                          type="text"
+                          value={newTask}
+                          onChange={(e) => setNewTask(e.target.value)}
+                          placeholder="Agenda Baru"
+                          className="flex-grow bg-slate-100 border-2 border-slate-200 rounded-full px-5 py-3 focus:ring-2 focus:ring-orange-400 focus:border-orange-400 outline-none transition-all duration-200 text-slate-800 placeholder-slate-400"
+                        />
                         <button
-                          type="button"
-                          onClick={() => setIsCalendarOpen(prev => !prev)}
-                          className="flex items-center justify-between w-40 bg-white border-2 border-slate-200 rounded-full px-4 py-2 text-sm focus:ring-2 focus:ring-orange-400 focus:border-orange-400 outline-none transition-all duration-200 text-slate-600 hover:bg-slate-50"
-                        >
-                          <span className={!deadline ? 'text-slate-400' : ''}>{formattedDeadline || 'Pilih tanggal'}</span>
-                          <CalendarIcon className="w-5 h-5 text-slate-500" />
+                          type="submit"
+                          className={`bg-orange-500 text-white font-bold p-3 rounded-full transition-all duration-200 flex items-center justify-center aspect-square transform ${
+                            isAddButtonDisabled
+                            ? 'opacity-50 cursor-not-allowed'
+                            : 'hover:bg-orange-600 hover:scale-110'
+                          }`}
+                          aria-label="Tambah tugas"
+                          disabled={isAddButtonDisabled}>
+                          <PaperAirplaneIcon className="w-6 h-6" />
                         </button>
-                        {isCalendarOpen && (
-                          <div className="absolute top-full mt-2 z-20 left-0 animate-fadeInUp w-96">
-                            <Calendar selectedDate={deadline} onDateSelect={handleDateSelect} highlightToday={false} disablePastDates />
+                      </div>
+                      
+                      <div className="flex flex-wrap items-center justify-start gap-3">
+                        <span className="text-sm font-semibold text-slate-500">Tentukan Deadline:</span>
+                        <div>
+                          <div className="relative" ref={datePickerRef}>
+                              <button
+                                type="button"
+                                onClick={() => setIsCalendarOpen(prev => !prev)}
+                                className="flex items-center justify-between w-40 bg-white border-2 border-slate-200 rounded-full px-4 py-2 text-sm focus:ring-2 focus:ring-orange-400 focus:border-orange-400 outline-none transition-all duration-200 text-slate-600 hover:bg-slate-50"
+                              >
+                                <span className={!deadline ? 'text-slate-400' : ''}>{formattedDeadline || 'Pilih tanggal'}</span>
+                                <CalendarIcon className="w-5 h-5 text-slate-500" />
+                              </button>
+                              {isCalendarOpen && (
+                                <div className="absolute top-full mt-2 z-20 left-0 animate-fadeInUp w-96">
+                                  <Calendar selectedDate={deadline} onDateSelect={handleDateSelect} highlightToday={false} disablePastDates />
+                                </div>
+                              )}
                           </div>
-                        )}
-                    </div>
-                    {dateError && <p className="text-red-500 text-xs mt-1 ml-2">{dateError}</p>}
-                  </div>
-                </div>
-
-                 <div className="flex flex-wrap items-center justify-start gap-3 mt-4 pt-4 border-t-2 border-slate-100">
-                    <span className="text-sm font-semibold text-slate-500">Ulangi Tugas:</span>
-                    <RepetitionButton type={RepetitionType.NONE} label="Tidak Diulang" onClick={handleRepetitionTypeChange} isActive={repetition.type === RepetitionType.NONE}/>
-                    <RepetitionButton type={RepetitionType.DAILY} label="Harian" onClick={handleRepetitionTypeChange} isActive={repetition.type === RepetitionType.DAILY}/>
-                    <RepetitionButton type={RepetitionType.WEEKLY} label="Mingguan" onClick={handleRepetitionTypeChange} isActive={repetition.type === RepetitionType.WEEKLY}/>
-                    <RepetitionButton type={RepetitionType.MONTHLY} label="Bulanan" onClick={handleRepetitionTypeChange} isActive={repetition.type === RepetitionType.MONTHLY}/>
-                    <RepetitionButton type={RepetitionType.CUSTOM} label="Custom" onClick={handleRepetitionTypeChange} isActive={repetition.type === RepetitionType.CUSTOM}/>
-                </div>
-                {repetition.type === RepetitionType.CUSTOM && (
-                    <div className="mt-4 pt-4 border-t-2 border-slate-100 animate-fadeInUp" style={{animationDuration: '0.3s'}}>
-                         <p className="text-sm font-semibold text-slate-500 mb-3">Pilih hari untuk pengulangan:</p>
-                        <div className="flex flex-wrap items-center justify-start gap-2">
-                           {daysOfWeek.map((day, index) => (
-                             <DayButton key={index} dayIndex={index} label={day} onClick={handleCustomDayChange} isActive={repetition.days?.includes(index) ?? false}/>
-                           ))}
+                          {dateError && <p className="text-red-500 text-xs mt-1 ml-2">{dateError}</p>}
                         </div>
-                    </div>
-                )}
+                      </div>
 
-                <div className="mt-4 pt-4 border-t-2 border-slate-100">
-                  <div className="flex flex-wrap items-center justify-start gap-3">
-                    <span className="text-sm font-semibold text-slate-500">Prioritas:</span>
-                    <button type="button" onClick={() => togglePriority(TaskPriority.IMPORTANT)} className={`px-4 py-2 rounded-full text-sm font-bold transition-all duration-200 ${priority.includes(TaskPriority.IMPORTANT) ? 'bg-green-500 text-white shadow-md' : 'bg-white text-slate-600 hover:bg-slate-100 border-2 border-slate-200'}`}>Penting</button>
-                    <button type="button" onClick={() => togglePriority(TaskPriority.URGENT)} className={`px-4 py-2 rounded-full text-sm font-bold transition-all duration-200 ${priority.includes(TaskPriority.URGENT) ? 'bg-blue-500 text-white shadow-md' : 'bg-white text-slate-600 hover:bg-slate-100 border-2 border-slate-200'}`}>Mendesak</button>
+                       <div className="flex flex-wrap items-center justify-start gap-3 mt-4 pt-4 border-t-2 border-slate-100">
+                          <span className="text-sm font-semibold text-slate-500">Ulangi Tugas:</span>
+                          <RepetitionButton type={RepetitionType.NONE} label="Tidak Diulang" onClick={handleRepetitionTypeChange} isActive={repetition.type === RepetitionType.NONE}/>
+                          <RepetitionButton type={RepetitionType.DAILY} label="Harian" onClick={handleRepetitionTypeChange} isActive={repetition.type === RepetitionType.DAILY}/>
+                          <RepetitionButton type={RepetitionType.WEEKLY} label="Mingguan" onClick={handleRepetitionTypeChange} isActive={repetition.type === RepetitionType.WEEKLY}/>
+                          <RepetitionButton type={RepetitionType.MONTHLY} label="Bulanan" onClick={handleRepetitionTypeChange} isActive={repetition.type === RepetitionType.MONTHLY}/>
+                          <RepetitionButton type={RepetitionType.CUSTOM} label="Custom" onClick={handleRepetitionTypeChange} isActive={repetition.type === RepetitionType.CUSTOM}/>
+                      </div>
+                      {repetition.type === RepetitionType.CUSTOM && (
+                          <div className="mt-4 pt-4 border-t-2 border-slate-100 animate-fadeInUp" style={{animationDuration: '0.3s'}}>
+                               <p className="text-sm font-semibold text-slate-500 mb-3">Pilih hari untuk pengulangan:</p>
+                              <div className="flex flex-wrap items-center justify-start gap-2">
+                                 {daysOfWeek.map((day, index) => (
+                                   <DayButton key={index} dayIndex={index} label={day} onClick={handleCustomDayChange} isActive={repetition.days?.includes(index) ?? false}/>
+                                 ))}
+                              </div>
+                          </div>
+                      )}
+
+                      <div className="mt-4 pt-4 border-t-2 border-slate-100">
+                        <div className="flex flex-wrap items-center justify-start gap-3">
+                          <span className="text-sm font-semibold text-slate-500">Prioritas:</span>
+                          <button type="button" onClick={() => togglePriority(TaskPriority.IMPORTANT)} className={`px-4 py-2 rounded-full text-sm font-bold transition-all duration-200 ${priority.includes(TaskPriority.IMPORTANT) ? 'bg-green-500 text-white shadow-md' : 'bg-white text-slate-600 hover:bg-slate-100 border-2 border-slate-200'}`}>Penting</button>
+                          <button type="button" onClick={() => togglePriority(TaskPriority.URGENT)} className={`px-4 py-2 rounded-full text-sm font-bold transition-all duration-200 ${priority.includes(TaskPriority.URGENT) ? 'bg-blue-500 text-white shadow-md' : 'bg-white text-slate-600 hover:bg-slate-100 border-2 border-slate-200'}`}>Mendesak</button>
+                        </div>
+                        {addPriorityDescription}
+                      </div>
+                    </form>
                   </div>
-                  {addPriorityDescription}
                 </div>
-              </form>
+              </div>
             </div>
 
             <div className="bg-white p-6 rounded-2xl border-2 border-slate-200 shadow-lg">

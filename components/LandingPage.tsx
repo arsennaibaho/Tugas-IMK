@@ -23,22 +23,6 @@ const LandingPage: React.FC<LandingPageProps> = ({ onNavigateToLogin, onNavigate
         <AnimatedIllustration2 />
       </div>
 
-
-      <header className="absolute top-4 right-4 z-20">
-        <div className="bg-orange-100/70 backdrop-blur-sm p-2 rounded-full shadow-md">
-            <nav className="flex items-center gap-2">
-            <button 
-                onClick={onNavigateToLogin}
-                className="px-4 py-2 bg-teal-500 text-white font-bold rounded-full hover:bg-teal-600 transition-all transform hover:scale-105">
-                Masuk
-            </button>
-            <button onClick={onNavigateToRegister} className="px-4 py-2 font-semibold text-teal-600 hover:text-teal-700">
-                Daftar
-            </button>
-            </nav>
-        </div>
-      </header>
-
       <main className="z-10 flex flex-col items-center animate-fadeInUp">
         <div className="mb-4 text-2xl font-bold text-orange-500" style={{ fontFamily: "'Comic Sans MS', cursive, sans-serif" }}>Priority Your Task</div>
         <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight mb-4 text-teal-600">
@@ -47,6 +31,19 @@ const LandingPage: React.FC<LandingPageProps> = ({ onNavigateToLogin, onNavigate
         <p className="max-w-2xl mx-auto text-lg md:text-xl text-slate-600 mb-8">
           Selamat datang di Priority Your Task! Tempat yang super seru untuk mengelola petualangan harianmu. Berhenti bingung mau melakukan apa dan mulailah bersenang-senang dengan ide-ide ajaib!
         </p>
+        
+        <div className="flex items-center gap-6 mt-8">
+          <button 
+              onClick={onNavigateToLogin}
+              className="px-8 py-3 text-lg bg-teal-500 text-white font-bold rounded-full hover:bg-teal-600 transition-all transform hover:scale-105 shadow-lg hover:shadow-xl">
+              Masuk
+          </button>
+          <button 
+              onClick={onNavigateToRegister} 
+              className="px-8 py-3 text-lg font-bold text-teal-600 bg-white/70 backdrop-blur-sm rounded-full hover:text-teal-700 transition-all transform hover:scale-105 shadow-lg hover:shadow-xl">
+              Daftar
+          </button>
+        </div>
       </main>
     </div>
   );
