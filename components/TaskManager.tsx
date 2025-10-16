@@ -1,4 +1,5 @@
 
+
 import React, { useState, useMemo, useRef, useEffect } from 'react';
 import { Task, FilterStatus, TaskPriority, Repetition, RepetitionType } from '../types';
 import TaskItem from './TaskItem';
@@ -641,7 +642,7 @@ const TaskManager: React.FC<TaskManagerProps> = ({ userName, tasks, addTask, tog
                 className="grid transition-all duration-500 ease-in-out"
                 style={{ gridTemplateRows: isAddTaskFormVisible ? '1fr' : '0fr' }}
               >
-                <div className="overflow-hidden">
+                <div className={isCalendarOpen ? '' : 'overflow-hidden'}>
                   <div className={`pt-4 ${!isAddTaskFormVisible && 'invisible'}`}>
                     <form onSubmit={handleAddTask}>
                       <div className="flex gap-3 mb-4">
@@ -841,7 +842,7 @@ const TaskManager: React.FC<TaskManagerProps> = ({ userName, tasks, addTask, tog
                   <h3 className="text-xl font-bold text-purple-600">Edit Tugas</h3>
                   <button onClick={() => setEditingTask(null)} className="p-2 rounded-full hover:bg-slate-200 transition-colors" aria-label="Tutup editor"><XIcon className="w-6 h-6 text-slate-600" /></button>
               </div>
-              <form onSubmit={handleUpdateTask} className="overflow-y-auto pr-2 flex-grow">
+              <form onSubmit={handleUpdateTask} className={`${isEditCalendarOpen ? 'overflow-visible' : 'overflow-y-auto'} pr-2 flex-grow`}>
                  <div className="mb-4">
                     <label htmlFor="edit-task-text" className="text-sm font-semibold text-slate-500 mb-1 block">Nama Tugas:</label>
                     <input
